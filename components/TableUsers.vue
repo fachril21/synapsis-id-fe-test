@@ -51,7 +51,7 @@
           </vs-td>
           <vs-td>
             <div class="flex flex-row">
-              <vs-button icon flat>
+              <vs-button icon flat @click="onEdit(tr._id)">
                 <i class="bx bx-edit"></i>
               </vs-button>
               <vs-button icon flat color="danger">
@@ -64,6 +64,7 @@
       <template #footer>
         <vs-pagination
           only-arrows
+          color="#4299e1"
           v-model="page"
           :length="$vs.getLength(dataUsers, max)"
         />
@@ -84,8 +85,13 @@ export default {
       dataUsers: this.data,
       search: "",
       page: 1,
-      max: 3,
+      max: 10,
     };
+  },
+  methods: {
+    onEdit(id) {
+      this.$router.push("/edit-user/" + id);
+    },
   },
 };
 </script>

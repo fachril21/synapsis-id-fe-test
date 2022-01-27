@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto lg:container lg:mx-auto py-8">
+  <div>
     <div class="flex flex-row justify-between items-center mb-8">
       <div class="text-2xl font-bold">List Users</div>
       <button

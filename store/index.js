@@ -11,9 +11,16 @@ export const mutations = {
   addUser(state, user) {
     state.loadedUsers.push(user);
   },
+  editUser(state, editedUser) {
+    const userIndex = state.loadedUsers.findIndex(
+      (user) => user._id === editedUser._id
+    );
+    state.loadedUsers[userIndex] = editedUser;
+  },
 };
 
 export const actions = {
+  //Get data for first load. This method run in server.
   nuxtServerInit({ commit }, context) {
     return axios
       .post(
@@ -40,6 +47,8 @@ export const actions = {
       })
       .catch((e) => context.error(e));
   },
+
+  //Method for adding user.
   addUser({ commit }, user) {
     return axios
       .post(
@@ -63,9 +72,43 @@ export const actions = {
       })
       .catch((e) => console.log(e));
   },
-  setUsers({ commit }, users) {
-    commit("setUsers", users);
+
+  //Method for editing user.
+  editUser({ commit }, editedUser) {
+    return axios
+      .post(
+        "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/updateOne",
+        {
+          collection: "users",
+          database: "synapsis",
+          dataSource: "Cluster0",
+          filter: { _id: { $oid: editedUser._id } },
+          update: {
+            $set: {
+              first_name: editedUser.first_name,
+              last_name: editedUser.last_name,
+              email: editedUser.email,
+              phone: editedUser.phone,
+              address: editedUser.address,
+            },
+          },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Request-Headers": "*",
+            "api-key": process.env.VUE_APP_API_KEY,
+          },
+        }
+      )
+      .then((res) => {
+        commit("editUser", editedUser);
+      })
+      .catch((e) => console.log(e));
   },
+  // setUsers({ commit }, users) {
+  //   commit("setUsers", users);
+  // },
 };
 
 export const getters = {
@@ -73,55 +116,3 @@ export const getters = {
     return state.loadedUsers;
   },
 };
-
-// const createStore = () => {
-//   return new Vuex.Store({
-//     state: {
-//       loadedUsers: [],
-//     },
-//     mutations: {
-//       setUsers(state, users) {
-//         state.loadedUsers = users;
-//       },
-//     },
-//     actions: {
-//       nuxtServerInit(vuexContext, context) {
-//         return axios
-//           .post(
-//             "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/find",
-//             {
-//               collection: "users",
-//               database: "synapsis",
-//               dataSource: "Cluster0",
-//             },
-//             {
-//               headers: {
-//                 "Content-Type": "application/json",
-//                 "Access-Control-Request-Headers": "*",
-//                 "api-key":
-//                   "o9WxKT7XkkhQ0ImG1hjlJRlrRBwBOs4VnfnlAp60Z24goqV79K6RVQlzbMw2Yldx",
-//               },
-//             }
-//           )
-//           .then((res) => {
-//             const usersArray = [];
-//             for (const key in res.data.documents) {
-//               usersArray.push(res.data.documents[key]);
-//             }
-//             vuexContext.commit("setUsers", usersArray);
-//           })
-//           .catch((e) => context.error(e));
-//       },
-//       setUsers(vuexContext, users) {
-//         vuexContext.commit("setUsers", users);
-//       },
-//     },
-//     getters: {
-//       loadedUsers(state) {
-//         return state.loadedUsers;
-//       },
-//     },
-//   });
-// };
-
-// export default createStore;

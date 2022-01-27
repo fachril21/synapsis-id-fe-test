@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto lg:container lg:mx-auto py-8">
+  <div>
     <user-form @submit="onSubmit" />
   </div>
 </template>
