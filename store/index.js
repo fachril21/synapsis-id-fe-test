@@ -17,6 +17,15 @@ export const mutations = {
     );
     state.loadedUsers[userIndex] = editedUser;
   },
+  deleteUser(state, deletedUser) {
+    const userIndex = state.loadedUsers.findIndex(
+      (user) => user._id === deletedUser._id
+    );
+    state.loadedUsers.splice(userIndex, 1);
+  },
+  setLoading(state, status) {
+    state.loading = status;
+  },
 };
 
 export const actions = {
@@ -103,6 +112,37 @@ export const actions = {
       )
       .then((res) => {
         commit("editUser", editedUser);
+      })
+      .catch((e) => console.log(e));
+  },
+
+  //Method for deleting user.
+  deleteUser({ commit }, deletedUser) {
+    const loader = this._vm.$vs.loading({
+      background: "#ebf8ff",
+      color: "#4299e1",
+    });
+    console.log("vm " + this._vm);
+    return axios
+      .post(
+        "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/deleteOne",
+        {
+          collection: "users",
+          database: "synapsis",
+          dataSource: "Cluster0",
+          filter: { _id: { $oid: deletedUser._id } },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Request-Headers": "*",
+            "api-key": process.env.VUE_APP_API_KEY,
+          },
+        }
+      )
+      .then((res) => {
+        commit("deleteUser", deletedUser);
+        loader.close();
       })
       .catch((e) => console.log(e));
   },

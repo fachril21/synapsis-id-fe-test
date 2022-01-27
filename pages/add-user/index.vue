@@ -15,7 +15,8 @@ export default {
         .then(() => {
           this.$vs.notification({
             color: "success",
-            position: "top-right",
+            position: "bottom-right",
+            progress: "auto",
             title: "User data added successfully",
             text: "Yeay, your data is successfully stored safely!",
           });
