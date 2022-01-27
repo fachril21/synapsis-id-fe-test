@@ -9,7 +9,7 @@ export const mutations = {
     state.loadedUsers = users;
   },
   addUser(state, user) {
-    state.loadedUsers.push(user);
+    state.loadedUsers.unshift(user);
   },
   editUser(state, editedUser) {
     const userIndex = state.loadedUsers.findIndex(
@@ -38,6 +38,9 @@ export const actions = {
           collection: "users",
           database: "synapsis",
           dataSource: "Cluster0",
+          sort: {
+            updatedAt: -1,
+          },
         },
         {
           headers: {
@@ -66,7 +69,7 @@ export const actions = {
           collection: "users",
           database: "synapsis",
           dataSource: "Cluster0",
-          document: { ...user },
+          document: { ...user, updatedAt: new Date() },
         },
         {
           headers: {
@@ -77,7 +80,8 @@ export const actions = {
         }
       )
       .then((res) => {
-        commit("addUser", user);
+        console.log(res);
+        commit("addUser", { _id: res.data.insertedId, ...user });
       })
       .catch((e) => console.log(e));
   },
@@ -99,6 +103,7 @@ export const actions = {
               email: editedUser.email,
               phone: editedUser.phone,
               address: editedUser.address,
+              updatedAt: new Date(),
             },
           },
         },
@@ -143,6 +148,13 @@ export const actions = {
       .then((res) => {
         commit("deleteUser", deletedUser);
         loader.close();
+        this._vm.$vs.notification({
+          color: "success",
+          position: "bottom-right",
+          progress: "auto",
+          title: "User data deleted successfully",
+          text: "Yeay, your data is successfully deleted!",
+        });
       })
       .catch((e) => console.log(e));
   },

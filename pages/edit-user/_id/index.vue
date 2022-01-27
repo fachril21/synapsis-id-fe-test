@@ -40,7 +40,7 @@ export default {
         .then(() => {
           this.$vs.notification({
             color: "success",
-            position: "top-right",
+            position: "bottom-right",
             title: "User data edited successfully",
             text: "Yeay, your data is successfully stored safely!",
           });

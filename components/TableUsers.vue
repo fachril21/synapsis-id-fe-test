@@ -1,11 +1,16 @@
 <template>
   <div>
-    <vs-table>
-      <template #header>
-        <vs-input v-model="search" border placeholder="Search" />
-      </template>
+    {{ selectedUsers }}
+    <vs-table v-model="selectedUsers">
       <template #thead>
         <vs-tr>
+          <vs-th>
+            <vs-checkbox
+              :indeterminate="selectedUsers.length == dataUsers.length"
+              v-model="allCheck"
+              @change="selectedUsers = $vs.checkAll(selectedUsers, dataUsers)"
+            />
+          </vs-th>
           <vs-th
             sort
             @click="dataUsers = $vs.sortData($event, dataUsers, 'first_name')"
@@ -38,7 +43,11 @@
           :key="i"
           v-for="(tr, i) in $vs.getPage(dataUsers, page, max)"
           :data="tr"
+          :is-selected="!!selectedUsers.includes(tr._id)"
         >
+          <vs-td checkbox>
+            <vs-checkbox :val="tr._id" v-model="selectedUsers" />
+          </vs-td>
           <vs-td> {{ tr.first_name }} {{ tr.last_name }} </vs-td>
           <vs-td>
             {{ tr.email }}
@@ -62,17 +71,39 @@
         </vs-tr>
       </template>
       <template #footer>
-        <div class="flex flex-row gap-2 items-center justify-center">
-          <vs-pagination
+        <div class="flex flex-row gap-4 items-center justify-center">
+          <!-- <vs-pagination
             only-arrows
             color="#4299e1"
             v-model="page"
             :length="getLengthPage"
-          />
+          /> -->
+          <div class="flex flex-row gap-1">
+            <vs-button
+              class="focus:outline-none"
+              relief
+              color="#4299e1"
+              :active="false"
+              icon
+              @click="onPrev"
+            >
+              <i class="bx bx-chevron-left"></i>
+            </vs-button>
+            <vs-button
+              class="focus:outline-none"
+              relief
+              color="#4299e1"
+              :active="false"
+              icon
+              @click="onNext"
+            >
+              <i class="bx bx-chevron-right"></i>
+            </vs-button>
+          </div>
           <span
             class="px-2 py-1 bg-blue-200 rounded-md font-bold text-blue-800"
           >
-            Page: {{ page }}
+            Page: {{ page }} of {{ getLengthPage }} pages
           </span>
         </div>
       </template>
@@ -115,10 +146,12 @@ export default {
       dataUsers: this.data,
       search: "",
       page: 1,
-      max: 3,
+      max: 10,
       dialogActive: false,
       componentId: "",
       deletedUserSelect: {},
+      selectedUsers: [],
+      allCheck: false,
     };
   },
   methods: {
@@ -138,6 +171,16 @@ export default {
     onDeleteConfirm(value) {
       console.log("on delete user " + value.first_name);
       this.onDelete(value);
+    },
+    onNext() {
+      if (this.page != this.getLengthPage) {
+        this.page = this.page + 1;
+      }
+    },
+    onPrev() {
+      if (this.page != 1) {
+        this.page = this.page - 1;
+      }
     },
   },
   computed: {
