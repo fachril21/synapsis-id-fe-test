@@ -23,6 +23,14 @@ export const mutations = {
     );
     state.loadedUsers.splice(userIndex, 1);
   },
+  deleteManyUsers(state, deletedUsers) {
+    for (const key in deletedUsers) {
+      const userIndex = state.loadedUsers.findIndex(
+        (user) => user._id === deletedUsers[key]
+      );
+      state.loadedUsers.splice(userIndex, 1);
+    }
+  },
   setLoading(state, status) {
     state.loading = status;
   },
@@ -127,7 +135,6 @@ export const actions = {
       background: "#ebf8ff",
       color: "#4299e1",
     });
-    console.log("vm " + this._vm);
     return axios
       .post(
         "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/deleteOne",
@@ -153,6 +160,45 @@ export const actions = {
           position: "bottom-right",
           progress: "auto",
           title: "User data deleted successfully",
+          text: "Yeay, your data is successfully deleted!",
+        });
+      })
+      .catch((e) => console.log(e));
+  },
+  deleteManyUsers({ commit }, deletedUsersId) {
+    const loader = this._vm.$vs.loading({
+      background: "#ebf8ff",
+      color: "#4299e1",
+    });
+    const deletedUsers = [];
+    for (let key in deletedUsersId) {
+      deletedUsers.push({ $oid: deletedUsersId[key] });
+    }
+    return axios
+      .post(
+        "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/deleteMany",
+        {
+          collection: "users",
+          database: "synapsis",
+          dataSource: "Cluster0",
+          filter: { _id: { $in: deletedUsers } },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Request-Headers": "*",
+            "api-key": process.env.VUE_APP_API_KEY,
+          },
+        }
+      )
+      .then((res) => {
+        commit("deleteManyUsers", deletedUsersId);
+        loader.close();
+        this._vm.$vs.notification({
+          color: "success",
+          position: "bottom-right",
+          progress: "auto",
+          title: "Users data deleted successfully",
           text: "Yeay, your data is successfully deleted!",
         });
       })

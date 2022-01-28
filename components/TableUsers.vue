@@ -1,6 +1,15 @@
 <template>
   <div>
-    {{ selectedUsers }}
+    <div class="flex justify-end">
+      <vs-button
+        flat
+        v-if="selectedUsers.length != 0"
+        color="danger"
+        @click="onDeleteManyUsers"
+      >
+        Delete Selected Users
+      </vs-button>
+    </div>
     <vs-table v-model="selectedUsers">
       <template #thead>
         <vs-tr>
@@ -46,7 +55,11 @@
           :is-selected="!!selectedUsers.includes(tr._id)"
         >
           <vs-td checkbox>
-            <vs-checkbox :val="tr._id" v-model="selectedUsers" />
+            <vs-checkbox
+              :val="tr._id"
+              v-model="selectedUsers"
+              color="#4299e1"
+            />
           </vs-td>
           <vs-td> {{ tr.first_name }} {{ tr.last_name }} </vs-td>
           <vs-td>
@@ -159,7 +172,7 @@ export default {
       this.$router.push("/edit-user/" + id);
     },
     onDelete(userData) {
-      this.$store.dispatch("deleteUser", userData).then(() => {});
+      this.$store.dispatch("deleteUser", userData);
     },
     showDeleteDialog(userData) {
       this.deletedUserSelect = userData;
@@ -169,7 +182,7 @@ export default {
       this.componentId = value;
     },
     onDeleteConfirm(value) {
-      console.log("on delete user " + value.first_name);
+      // console.log("on delete user " + value.first_name);
       this.onDelete(value);
     },
     onNext() {
@@ -181,6 +194,11 @@ export default {
       if (this.page != 1) {
         this.page = this.page - 1;
       }
+    },
+    onDeleteManyUsers() {
+      this.$store.dispatch("deleteManyUsers", this.selectedUsers).then(() => {
+        this.selectedUsers = [];
+      });
     },
   },
   computed: {
