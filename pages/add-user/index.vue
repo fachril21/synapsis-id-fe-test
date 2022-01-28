@@ -22,7 +22,9 @@ export default {
           });
           this.$router.push("/");
         })
-        .catch((e) => console.log(e));
+        .catch((error) => {
+          this.$nuxt.error(error);
+        });
     },
   },
 };

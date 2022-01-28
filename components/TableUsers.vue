@@ -5,7 +5,7 @@
         flat
         v-if="selectedUsers.length != 0"
         color="danger"
-        @click="onDeleteManyUsers"
+        @click="showDeleteDialog(selectedUsers)"
       >
         Delete Selected Users
       </vs-button>
@@ -160,9 +160,8 @@ export default {
       search: "",
       page: 1,
       max: 10,
-      dialogActive: false,
       componentId: "",
-      deletedUserSelect: {},
+      deletedUserSelect: null,
       selectedUsers: [],
       allCheck: false,
     };
@@ -172,7 +171,9 @@ export default {
       this.$router.push("/edit-user/" + id);
     },
     onDelete(userData) {
-      this.$store.dispatch("deleteUser", userData);
+      this.$store.dispatch("deleteUser", userData).catch((error) => {
+        this.$nuxt.error(error);
+      });
     },
     showDeleteDialog(userData) {
       this.deletedUserSelect = userData;
@@ -182,8 +183,11 @@ export default {
       this.componentId = value;
     },
     onDeleteConfirm(value) {
-      // console.log("on delete user " + value.first_name);
-      this.onDelete(value);
+      if (Array.isArray(value)) {
+        this.onDeleteManyUsers(value);
+      } else {
+        this.onDelete(value);
+      }
     },
     onNext() {
       if (this.page != this.getLengthPage) {
@@ -195,10 +199,16 @@ export default {
         this.page = this.page - 1;
       }
     },
-    onDeleteManyUsers() {
-      this.$store.dispatch("deleteManyUsers", this.selectedUsers).then(() => {
-        this.selectedUsers = [];
-      });
+    onDeleteManyUsers(usersData) {
+      this.$store
+        .dispatch("deleteManyUsers", usersData)
+        .then(() => {
+          this.isMany = false;
+          this.selectedUsers = [];
+        })
+        .catch((error) => {
+          this.$nuxt.error(error);
+        });
     },
   },
   computed: {

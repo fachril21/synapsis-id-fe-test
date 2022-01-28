@@ -9,8 +9,7 @@
         >
           <i class="bx bx-trash-alt text-red-700"></i>
         </div>
-        Are you sure you want to delete {{ user.first_name }}
-        {{ user.last_name }}?
+        Are you sure you want to delete?
       </div>
     </template>
 
@@ -40,8 +39,7 @@
 export default {
   props: {
     user: {
-      type: Object,
-      required: true,
+      required: false,
     },
   },
   data() {

@@ -54,6 +54,7 @@ export const actions = {
           headers: {
             "Content-Type": "application/json",
             "Access-Control-Request-Headers": "*",
+            "Access-Control-Allow-Origin": "*",
             "api-key": process.env.VUE_APP_API_KEY,
           },
         }
@@ -70,139 +71,160 @@ export const actions = {
 
   //Method for adding user.
   addUser({ commit }, user) {
-    return axios
-      .post(
-        "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/insertOne",
-        {
-          collection: "users",
-          database: "synapsis",
-          dataSource: "Cluster0",
-          document: { ...user, updatedAt: new Date() },
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Request-Headers": "*",
-            "api-key": process.env.VUE_APP_API_KEY,
+    return new Promise((resolve, reject) => {
+      axios
+        .post(
+          "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/insertOne",
+          {
+            collection: "users",
+            database: "synapsis",
+            dataSource: "Cluster0",
+            document: { ...user, updatedAt: new Date() },
           },
-        }
-      )
-      .then((res) => {
-        console.log(res);
-        commit("addUser", { _id: res.data.insertedId, ...user });
-      })
-      .catch((e) => console.log(e));
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Request-Headers": "*",
+              "Access-Control-Allow-Origin": "*",
+              "api-key": process.env.VUE_APP_API_KEY,
+            },
+          }
+        )
+        .then((res) => {
+          resolve(commit("addUser", { _id: res.data.insertedId, ...user }));
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   },
 
   //Method for editing user.
   editUser({ commit }, editedUser) {
-    return axios
-      .post(
-        "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/updateOne",
-        {
-          collection: "users",
-          database: "synapsis",
-          dataSource: "Cluster0",
-          filter: { _id: { $oid: editedUser._id } },
-          update: {
-            $set: {
-              first_name: editedUser.first_name,
-              last_name: editedUser.last_name,
-              email: editedUser.email,
-              phone: editedUser.phone,
-              address: editedUser.address,
-              updatedAt: new Date(),
+    return new Promise((resolve, reject) => {
+      axios
+        .post(
+          "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/updateOne",
+          {
+            collection: "users",
+            database: "synapsis",
+            dataSource: "Cluster0",
+            filter: { _id: { $oid: editedUser._id } },
+            update: {
+              $set: {
+                first_name: editedUser.first_name,
+                last_name: editedUser.last_name,
+                email: editedUser.email,
+                phone: editedUser.phone,
+                address: editedUser.address,
+                updatedAt: new Date(),
+              },
             },
           },
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Request-Headers": "*",
-            "api-key": process.env.VUE_APP_API_KEY,
-          },
-        }
-      )
-      .then((res) => {
-        commit("editUser", editedUser);
-      })
-      .catch((e) => console.log(e));
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Request-Headers": "*",
+              "Access-Control-Allow-Origin": "*",
+              "api-key": process.env.VUE_APP_API_KEY,
+            },
+          }
+        )
+        .then((res) => {
+          resolve(commit("editUser", editedUser));
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   },
 
   //Method for deleting user.
   deleteUser({ commit }, deletedUser) {
-    const loader = this._vm.$vs.loading({
-      background: "#ebf8ff",
-      color: "#4299e1",
-    });
-    return axios
-      .post(
-        "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/deleteOne",
-        {
-          collection: "users",
-          database: "synapsis",
-          dataSource: "Cluster0",
-          filter: { _id: { $oid: deletedUser._id } },
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Request-Headers": "*",
-            "api-key": process.env.VUE_APP_API_KEY,
+    return new Promise((resolve, reject) => {
+      const loader = this._vm.$vs.loading({
+        background: "#ebf8ff",
+        color: "#4299e1",
+      });
+      axios
+        .post(
+          "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/deleteOne",
+          {
+            collection: "users",
+            database: "synapsis",
+            dataSource: "Cluster0",
+            filter: { _id: { $oid: deletedUser._id } },
           },
-        }
-      )
-      .then((res) => {
-        commit("deleteUser", deletedUser);
-        loader.close();
-        this._vm.$vs.notification({
-          color: "success",
-          position: "bottom-right",
-          progress: "auto",
-          title: "User data deleted successfully",
-          text: "Yeay, your data is successfully deleted!",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Request-Headers": "*",
+              "Access-Control-Allow-Origin": "*",
+              "api-key": process.env.VUE_APP_API_KEY,
+            },
+          }
+        )
+        .then((res) => {
+          resolve(commit("deleteUser", deletedUser));
+          loader.close();
+          this._vm.$vs.notification({
+            color: "success",
+            position: "bottom-right",
+            progress: "auto",
+            title: "User data deleted successfully",
+            text: "Yeay, your data is successfully deleted!",
+          });
+        })
+        .catch((error) => {
+          loader.close();
+          reject(error);
         });
-      })
-      .catch((e) => console.log(e));
+    });
   },
   deleteManyUsers({ commit }, deletedUsersId) {
-    const loader = this._vm.$vs.loading({
-      background: "#ebf8ff",
-      color: "#4299e1",
-    });
-    const deletedUsers = [];
-    for (let key in deletedUsersId) {
-      deletedUsers.push({ $oid: deletedUsersId[key] });
-    }
-    return axios
-      .post(
-        "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/deleteMany",
-        {
-          collection: "users",
-          database: "synapsis",
-          dataSource: "Cluster0",
-          filter: { _id: { $in: deletedUsers } },
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Request-Headers": "*",
-            "api-key": process.env.VUE_APP_API_KEY,
+    return new Promise((resolve, reject) => {
+      const loader = this._vm.$vs.loading({
+        background: "#ebf8ff",
+        color: "#4299e1",
+      });
+      const deletedUsers = [];
+      for (let key in deletedUsersId) {
+        deletedUsers.push({ $oid: deletedUsersId[key] });
+      }
+      return axios
+        .post(
+          "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/deleteMany",
+          {
+            collection: "users",
+            database: "synapsis",
+            dataSource: "Cluster0",
+            filter: { _id: { $in: deletedUsers } },
           },
-        }
-      )
-      .then((res) => {
-        commit("deleteManyUsers", deletedUsersId);
-        loader.close();
-        this._vm.$vs.notification({
-          color: "success",
-          position: "bottom-right",
-          progress: "auto",
-          title: "Users data deleted successfully",
-          text: "Yeay, your data is successfully deleted!",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Request-Headers": "*",
+              "Access-Control-Allow-Origin": "*",
+              "api-key": process.env.VUE_APP_API_KEY,
+            },
+          }
+        )
+        .then((res) => {
+          resolve(commit("deleteManyUsers", deletedUsersId));
+          loader.close();
+          this._vm.$vs.notification({
+            color: "success",
+            position: "bottom-right",
+            progress: "auto",
+            title: "Users data deleted successfully",
+            text: "Yeay, your data is successfully deleted!",
+          });
+        })
+        .catch((error) => {
+          reject(error);
+          loader.close();
         });
-      })
-      .catch((e) => console.log(e));
+    });
   },
   // setUsers({ commit }, users) {
   //   commit("setUsers", users);
