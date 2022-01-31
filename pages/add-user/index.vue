@@ -8,6 +8,11 @@
 import UserForm from "~/components/UserForm.vue";
 export default {
   components: { UserForm },
+  head() {
+    return {
+      title: "Add User | " + process.env.TITLE,
+    };
+  },
   methods: {
     onSubmit(userData) {
       this.$store

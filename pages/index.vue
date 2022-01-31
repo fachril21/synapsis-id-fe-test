@@ -19,6 +19,11 @@
 import TableUsers from "~/components/TableUsers.vue";
 export default {
   components: { TableUsers },
+  head() {
+    return {
+      title: "List Users | " + process.env.TITLE,
+    };
+  },
   computed: {
     loadedUsers() {
       return this.$store.getters.loadedUsers;

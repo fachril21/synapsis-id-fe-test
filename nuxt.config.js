@@ -5,7 +5,7 @@ export default {
     host: "0.0.0.0", // default: localhost
   },
   head: {
-    title: "synapsis-id-fe-test",
+    title: "List of Users",
     htmlAttrs: {
       lang: "en",
     },
@@ -37,7 +37,6 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/tailwindcss
     "@nuxtjs/tailwindcss",
-    "@nuxtjs/dotenv",
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -51,4 +50,10 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
+
+  env: {
+    TITLE: "Synapsis.id",
+    VUE_APP_API_KEY:
+      "o9WxKT7XkkhQ0ImG1hjlJRlrRBwBOs4VnfnlAp60Z24goqV79K6RVQlzbMw2Yldx",
+  },
 };

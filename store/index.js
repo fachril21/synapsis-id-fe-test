@@ -192,7 +192,8 @@ export const actions = {
         color: "#4299e1",
       });
 
-      // Create variable that contain only ID properties from data user. Because data from vue template is user data object. API Delete document on MongoDB only use the ID of data user.
+      // Create variable that contain only ID properties from data user. Because data from vue template is user data object.
+      // API Delete document on MongoDB only use the ID of data user.
       const deletedUsers = [];
       for (let key in deletedUsersId) {
         deletedUsers.push({ $oid: deletedUsersId[key]._id });

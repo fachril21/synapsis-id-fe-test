@@ -9,6 +9,11 @@ import UserForm from "~/components/UserForm.vue";
 import axios from "axios";
 export default {
   components: { UserForm },
+  head() {
+    return {
+      title: "Edit User | " + process.env.TITLE,
+    };
+  },
   asyncData(context) {
     return axios
       .post(
