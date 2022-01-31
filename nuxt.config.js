@@ -5,7 +5,7 @@ export default {
     host: "0.0.0.0", // default: localhost
   },
   head: {
-    title: "List of Users",
+    title: process.env.TITLE,
     htmlAttrs: {
       lang: "en",
     },
