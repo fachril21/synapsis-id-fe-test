@@ -66,7 +66,14 @@
             <vs-td checkbox>
               <vs-checkbox :val="tr" v-model="selectedUsers" color="#4299e1" />
             </vs-td>
-            <vs-td> {{ tr.first_name }} {{ tr.last_name }} </vs-td>
+            <vs-td>
+              <div class="flex flex-row gap-4 items-center">
+                <vs-avatar size="30" color="#4299e1">
+                  <template #text> {{ getInitial(tr) }} </template>
+                </vs-avatar>
+                <span class="font-bold">{{ getFullName(tr) }}</span>
+              </div>
+            </vs-td>
             <vs-td>
               {{ tr.email }}
             </vs-td>
