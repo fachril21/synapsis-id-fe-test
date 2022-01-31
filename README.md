@@ -22,8 +22,8 @@ Create an env file in the root directory and put this api-key into the env file
 VUE_APP_API_KEY=o9WxKT7XkkhQ0ImG1hjlJRlrRBwBOs4VnfnlAp60Z24goqV79K6RVQlzbMw2Yldx
 ```
 
-Notes:
-I am getting problem with CORS when using API from MongoDB Atlas. Please bypass CORS by installing the extension on your web browser to access data from MongoDB.
+**Notes:
+I am getting problem with CORS when using API from MongoDB Atlas. Please bypass CORS by installing the extension on your web browser to access data from MongoDB.**
 
 For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
 
