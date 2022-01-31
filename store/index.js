@@ -60,6 +60,7 @@ export const actions = {
         }
       )
       .then((res) => {
+        // Storing data from MongoDB into local store
         const usersArray = [];
         for (const key in res.data.documents) {
           usersArray.push(res.data.documents[key]);
@@ -85,12 +86,13 @@ export const actions = {
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Request-Headers": "*",
-              "Access-Control-Allow-Origin": "*",
+              "access-control-allow-origin": "*",
               "api-key": process.env.VUE_APP_API_KEY,
             },
           }
         )
         .then((res) => {
+          // Doing some change in local store
           resolve(commit("addUser", { _id: res.data.insertedId, ...user }));
         })
         .catch((error) => {
@@ -131,6 +133,7 @@ export const actions = {
           }
         )
         .then((res) => {
+          // Doing some change in local store
           resolve(commit("editUser", editedUser));
         })
         .catch((error) => {
@@ -165,6 +168,7 @@ export const actions = {
           }
         )
         .then((res) => {
+          // Doing some change in local store
           resolve(commit("deleteUser", deletedUser));
           loader.close();
           this._vm.$vs.notification({
@@ -187,10 +191,13 @@ export const actions = {
         background: "#ebf8ff",
         color: "#4299e1",
       });
+
+      // Create variable that contain only ID properties from data user. Because data from vue template is user data object. API Delete document on MongoDB only use the ID of data user.
       const deletedUsers = [];
       for (let key in deletedUsersId) {
-        deletedUsers.push({ $oid: deletedUsersId[key] });
+        deletedUsers.push({ $oid: deletedUsersId[key]._id });
       }
+
       return axios
         .post(
           "https://data.mongodb-api.com/app/data-ersjc/endpoint/data/beta/action/deleteMany",
@@ -210,6 +217,7 @@ export const actions = {
           }
         )
         .then((res) => {
+          // Doing some change in local store
           resolve(commit("deleteManyUsers", deletedUsersId));
           loader.close();
           this._vm.$vs.notification({
@@ -226,9 +234,6 @@ export const actions = {
         });
     });
   },
-  // setUsers({ commit }, users) {
-  //   commit("setUsers", users);
-  // },
 };
 
 export const getters = {

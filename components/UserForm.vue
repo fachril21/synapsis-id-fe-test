@@ -5,8 +5,9 @@
     </div>
     <form @submit.prevent="onSubmit">
       <div class="flex flex-col gap-8">
-        <div class="flex flex-row gap-4">
+        <div class="grid grid-cols-12 gap-8">
           <input-control
+            class="col-span-12 sm:col-span-6"
             v-model="editedUser.first_name"
             placeholder="First Name"
             required
@@ -14,6 +15,7 @@
             First Name
           </input-control>
           <input-control
+            class="col-span-12 sm:col-span-6"
             v-model="editedUser.last_name"
             placeholder="Last Name"
             required

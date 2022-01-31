@@ -6,6 +6,8 @@
       @deleteData="onDeleteConfirm"
       :user="deletedUserSelect"
     ></component>
+
+    <!-- FOR DESKTOP BREAKPOINT -->
     <div class="hidden sm:flex flex-col">
       <div class="flex justify-end">
         <vs-button
@@ -17,7 +19,7 @@
           Delete Selected Users
         </vs-button>
       </div>
-      <vs-table v-model="selectedUsers">
+      <vs-table>
         <template #thead>
           <vs-tr>
             <vs-th>
@@ -59,14 +61,10 @@
             :key="i"
             v-for="(tr, i) in $vs.getPage(dataUsers, page, max)"
             :data="tr"
-            :is-selected="!!selectedUsers.includes(tr._id)"
+            :is-selected="!!selectedUsers.includes(tr)"
           >
             <vs-td checkbox>
-              <vs-checkbox
-                :val="tr._id"
-                v-model="selectedUsers"
-                color="#4299e1"
-              />
+              <vs-checkbox :val="tr" v-model="selectedUsers" color="#4299e1" />
             </vs-td>
             <vs-td> {{ tr.first_name }} {{ tr.last_name }} </vs-td>
             <vs-td>
@@ -152,6 +150,8 @@
         </template>
       </vs-table>
     </div>
+
+    <!-- FOR MOBILE BREAKPOINT -->
     <div class="sm:hidden flex flex-col gap-4 pb-16">
       <div
         class="delete-multiple-container fixed bottom-0 left-0 w-full p-4 bg-white z-50 flex flex-row justify-between"
@@ -334,23 +334,24 @@ export default {
       allCheck: false,
     };
   },
-  watch: {},
   methods: {
+    // Push to edit page
     onEdit(id) {
       this.$router.push("/edit-user/" + id);
     },
-    onDelete(userData) {
-      this.$store.dispatch("deleteUser", userData).catch((error) => {
-        this.$nuxt.error(error);
-      });
-    },
+
+    //To show dialog for confirmation of delete data
     showDeleteDialog(userData) {
       this.deletedUserSelect = userData;
       this.componentId = "DeleteDialogConfirmation";
     },
+
+    //Close the component
     onClose(value) {
       this.componentId = value;
     },
+
+    //Checking the data, is it array or single value. If array then do onDeleteManyUsers method, if single value then do onDelete method
     onDeleteConfirm(value) {
       if (Array.isArray(value)) {
         this.onDeleteManyUsers(value);
@@ -358,16 +359,15 @@ export default {
         this.onDelete(value);
       }
     },
-    onNext() {
-      if (this.page != this.getLengthPage) {
-        this.page = this.page + 1;
-      }
+
+    // Action when delete confirmed
+    onDelete(userData) {
+      this.$store.dispatch("deleteUser", userData).catch((error) => {
+        this.$nuxt.error(error);
+      });
     },
-    onPrev() {
-      if (this.page != 1) {
-        this.page = this.page - 1;
-      }
-    },
+
+    // Action when multiple delete confirmed
     onDeleteManyUsers(usersData) {
       this.$store
         .dispatch("deleteManyUsers", usersData)
@@ -379,17 +379,24 @@ export default {
           this.$nuxt.error(error);
         });
     },
-    getFullName(user) {
-      return user.first_name + " " + user.last_name;
+
+    //Set next and previous page on pagination
+    onNext() {
+      if (this.page != this.getLengthPage) {
+        this.page = this.page + 1;
+      }
     },
-    getInitial(user) {
-      return (
-        user.first_name.charAt(0).toUpperCase() +
-        user.last_name.charAt(0).toUpperCase()
-      );
+    onPrev() {
+      if (this.page != 1) {
+        this.page = this.page - 1;
+      }
     },
+
+    // Get array of data in specific page
     getPage(dataUsers, page, max) {
-      console.log("run");
+      if (dataUsers.length == 0) {
+        return dataUsers;
+      }
       if (page == 1) {
         let data = [];
         for (let i = 0; i < max; i++) {
@@ -417,10 +424,26 @@ export default {
         }
       }
     },
+
+    //Get another value for data display
+    getFullName(user) {
+      return user.first_name + " " + user.last_name;
+    },
+    getInitial(user) {
+      return (
+        user.first_name.charAt(0).toUpperCase() +
+        user.last_name.charAt(0).toUpperCase()
+      );
+    },
   },
   computed: {
+    // Get the length of the page in pagination
     getLengthPage() {
-      return Math.ceil(this.dataUsers.length / this.max);
+      if (this.dataUsers.length == 0) {
+        return 1;
+      } else {
+        return Math.ceil(this.dataUsers.length / this.max);
+      }
     },
   },
 };
