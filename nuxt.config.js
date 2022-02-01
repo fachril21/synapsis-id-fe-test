@@ -54,6 +54,6 @@ export default {
   env: {
     TITLE: "Synapsis.id",
     VUE_APP_API_KEY:
-      "o9WxKT7XkkhQ0ImG1hjlJRlrRBwBOs4VnfnlAp60Z24goqV79K6RVQlzbMw2Yldx",
+      "MwR3bIuAxUlAMkyz57dwAqMp1WUy6JFhpS3tmW6Ds6L5vHeYrnWOEMJMkC1Fejls",
   },
 };

@@ -36,6 +36,9 @@ export default {
       )
       .then((res) => {
         return { loadedUser: res.data.document };
+      })
+      .catch((error) => {
+        this.$nuxt.error(error);
       });
   },
   methods: {
@@ -51,8 +54,8 @@ export default {
           });
           this.$router.push("/");
         })
-        .catch((e) => {
-          this.$nuxt.error(e);
+        .catch((error) => {
+          this.$nuxt.error(error);
         });
     },
   },

@@ -171,7 +171,19 @@
           Delete Selected Users
         </vs-button>
       </div>
-      <div class="pagination-card flex flex-row justify-between">
+      <div v-if="dataUsers.length == 0" class="px-8 text-center">
+        User data is still empty, you can add user data
+        <nuxt-link
+          to="/add-user"
+          class="font-bold text-blue-500 hover:text-blue-600 cursor-pointer transition-all ease-in-out duration-300"
+        >
+          here
+        </nuxt-link>
+      </div>
+      <div
+        v-if="dataUsers.length != 0"
+        class="pagination-card flex flex-row justify-between"
+      >
         <vs-button
           class="focus:outline-none"
           relief
@@ -266,7 +278,10 @@
           </div>
         </div>
       </div>
-      <div class="pagination-card flex flex-row justify-between">
+      <div
+        v-if="dataUsers.length != 0"
+        class="pagination-card flex flex-row justify-between"
+      >
         <vs-button
           class="focus:outline-none"
           relief
